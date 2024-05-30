@@ -1,0 +1,19 @@
+.Cards {
+    margin-top:85px;
+    width:80%;
+    margin-left: 10%;
+    margin-right:10%;
+    height:15vh;
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+@media(max-width: 900px) {
+    .Cards {
+        margin-top:0;
+        height: auto;
+        justify-content: center;
+    }
+}

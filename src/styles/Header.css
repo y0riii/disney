@@ -1,0 +1,135 @@
+.Header {
+    width:100%;
+    height:10vh;
+    background:#090b13;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+}
+.logo-cont {
+    height:10vh;
+    display:flex;
+    align-items: center;
+    width:min(13%, 120px);
+}
+.logo {
+    max-width: 100px;
+    max-height:100px;
+    cursor: pointer;
+}
+.pages-cont {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    height:10vh;
+    color:#fff;
+    width:50%;
+    font-size:clamp(10px, 17px, 22px);
+}
+.page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height:6vh;
+    cursor: pointer;
+    position: relative;
+    padding: 0 2px;
+    margin:0 min(12px, 2%);
+    width:min(20%, 100px);
+    color:#fff;
+    text-decoration: none;
+}
+.page img {
+    max-width:20px;
+    max-height:20px;
+}
+.page * {
+    margin:2px;
+}
+.page::before {
+    content: "";
+    position: absolute;
+    top:calc(6vh + 4px);
+    bottom:-6px;
+    left:-.5vw;
+    right:-.5vw;
+    background:#fff;
+    opacity:0;
+    transition:.5s;
+    transform: scaleX(0);
+}
+.page:hover::before {
+    opacity:1;
+    transform:scaleX(1);
+}
+.prof-cont {
+    color:#fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border:3px transparent solid;
+    padding:5px;
+}
+.prof-cont p {
+    font-size: 15px;
+    color: rgba(249,249,249,0.85);
+}
+.prof-cont p:nth-child(2) {
+    text-decoration: underline;
+    color:#fff;
+}
+.prof-cont p:nth-child(2):hover {
+    scale:1.05;
+    cursor: pointer;
+} 
+.loading {
+    width:100vw;
+    height:100vh;
+    background:#fff;
+    position:fixed;
+    top:0;
+    left:0;
+    z-index:100000;
+}
+
+@media (max-width:768px) {
+    .page {
+        width:70px;
+        font-size: 13px;
+        margin-right: 50px 50px;
+    }
+    .logo-cont {
+        translate: -20px 0;
+        width:60px;
+    }
+    .logo {
+        width:100%;
+        height:100%;
+    }
+    .prof-cont {
+        padding:2px;
+        margin-left:5px;
+        translate: 10px 0;
+    }
+    .prof-cont p {
+        font-size:11px;
+    }
+    .page img {
+        max-width:15px;
+        max-height:15px;
+    }
+    .page img {
+        translate:4px;
+    }
+}
+@media(max-width:375px) {
+    .logo-cont {
+        width:15%;
+        transform: translateX(2px);
+    }
+    .logo {
+        width: 100% !important;
+    }
+}
