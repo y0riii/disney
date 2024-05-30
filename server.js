@@ -5,12 +5,12 @@ const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 const mongo = require("mongodb");
 const randomString = require("randomstring");
-const Verifier = require("email-verifier");
 const passport = require("passport");
 const localStrategy = require("passport-local").Strategy;
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const uuid = require("uuid");
+require("dotenv").config()
 
 var url = "mongodb://localhost:27017/auth";
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -31,16 +31,25 @@ setTimeout(() => {
 
 app.use(express.json({ limit: "1000mb" }));
 app.use(express.urlencoded({ limit: "1000mb", extended: false }));
-app.use(
-    cors({
-        origin: "http://192.168.1.11:3000", // <-- location of the react app were connecting to
-        credentials: true,
-    })
-);
+const allowedOrigins = ['http://localhost:3000', `http://${process.env.REACT_APP_IP}:3000`];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
+  credentials: true
+};
+
+app.use(cors(corsOptions));
 app.use(
     session({
         secret: "secretcode",
-        resave: true,
+        resave: false,
         saveUninitialized: true,
     })
 );
@@ -59,38 +68,32 @@ app.post("/register", (req, res) => {
         return res.send("Username must be between 4 and 12 characters.");
     if (password.length > 24)
         return res.send("Password must be between 8 and 24 characters.");
-    let verifier = new Verifier("at_djd2eADi2X06VUNuc0BovclR4ohTn");
-    verifier.verify(email, { hardRefresh: true }, async (error, data) => {
-        if (error) return res.send("Invalid email address.");
-        if (data.smtpCheck == "false")
-            return res.send("Invalid email address.");
-        if (username.length < 4)
-            return res.send("Username must be at least 4 characters.");
-        db.collection("users")
-            .findOne({ username: username })
-            .then(async (result) => {
-                if (result != null) {
-                    return res.send("This username is taken.")
-                };
-                if (password != rPassword) return res.send("Passwords doesn't match.");
-                if (password.length < 8)
-                    return res.send("Password should contain at least 8 characters.");
-                db.collection("users")
-                    .findOne({ email: email })
-                    .then(async (result) => {
-                        if (result != null) return res.send("Email is already registered.");
-                        var hashedPassword = await bcrypt.hash(password, 10);
-                        db.collection("users").insertOne({
-                            id: Date.now().toString() + uuid.v4().toString(),
-                            username: username,
-                            email: email,
-                            password: hashedPassword,
-                            watchList: [],
-                        });
-                        return res.send("toHome");
+    if (username.length < 4)
+        return res.send("Username must be at least 4 characters.");
+    db.collection("users")
+        .findOne({ username: username })
+        .then(async (result) => {
+            if (result != null) {
+                return res.send("This username is taken.")
+            };
+            if (password != rPassword) return res.send("Passwords doesn't match.");
+            if (password.length < 8)
+                return res.send("Password should contain at least 8 characters.");
+            db.collection("users")
+                .findOne({ email: email })
+                .then(async (result) => {
+                    if (result != null) return res.send("Email is already registered.");
+                    var hashedPassword = await bcrypt.hash(password, 10);
+                    db.collection("users").insertOne({
+                        id: Date.now().toString() + uuid.v4().toString(),
+                        username: username,
+                        email: email,
+                        password: hashedPassword,
+                        watchList: [],
                     });
-            });
-    });
+                    return res.send("toHome");
+                });
+        });
 });
 
 app.post("/login", (req, res, next) => {
@@ -110,7 +113,9 @@ app.post("/login", (req, res, next) => {
 });
 
 app.get("/user", (req, res) => {
-    if (req.isAuthenticated()) return res.send(req.user);
+    if (req.isAuthenticated()) {
+        return res.send(req.user)
+    };
     res.send("");
 });
 

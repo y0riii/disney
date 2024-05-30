@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react'
 import "../styles/Login.css"
 import { Link, useNavigate } from "react-router-dom"
 import axios from "axios"
+const ipAddress = process.env.REACT_APP_IP
 
 function Login() {
     const [email, setEmail] = useState("")
@@ -23,7 +24,7 @@ function Login() {
                     password: password
                 },
                 withCredentials: true,
-                url: "http://192.168.1.11:4000/login",
+                url: `http://${ipAddress}:4000/login`,
             }).then(res => {
                 if (res.data === "suc") return navigate("/")
                 setError(res.data);

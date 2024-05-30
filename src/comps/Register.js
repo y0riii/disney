@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react'
 import "../styles/Register.css"
 import { Link, useNavigate } from "react-router-dom"
 import axios from "axios"
+const ipAddress = process.env.REACT_APP_IP
 
 function Register() {
   const errorDis = useRef()
@@ -53,7 +54,7 @@ function Register() {
                     rPassword: rPassword,
                 },
                 withCredentials: true,
-                url: "http://192.168.1.11:4000/register",
+                url: `http://${ipAddress}:4000/register`,
             }).then(res => {
                 if (res.data === "toHome") {
                     errorDis.current.style.color = "#00be00"

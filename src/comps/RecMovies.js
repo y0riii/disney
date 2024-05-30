@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import "../styles/RecMovies.css"
 import axios from "axios"
+const ipAddress = process.env.REACT_APP_IP
 
 function RecMovies() {
     let can = useRef(false)
@@ -62,7 +63,7 @@ function RecMovies() {
     }
 
     function addToWatchList() {
-        axios.post("http://192.168.1.11:4000/addWatch", { id: movieId.current }).then(res => {
+        axios.post(`http://${ipAddress}:4000/addWatch`, { id: movieId.current }).then(res => {
             if (res.data === "added") { span.current.innerText = "-"; span.current.classList.add("active") }
             else if (res.data === "removed") { span.current.innerText = "+"; span.current.classList.remove("active") }
         })
@@ -70,7 +71,7 @@ function RecMovies() {
 
     async function showTrailer(movie) {
         if (selected.current === false) return
-        axios.post("http://192.168.1.11:4000/findWatch", { id: movie.id }).then(res => {
+        axios.post(`http://${ipAddress}:4000/findWatch`, { id: movie.id }).then(res => {
             if (res.data === "found") { span.current.innerText = "-"; span.current.classList.add("active") }
             else { span.current.innerText = "+"; span.current.classList.remove("active") }
         })

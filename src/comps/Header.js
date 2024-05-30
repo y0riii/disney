@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import "../styles/Header.css"
 import { Link, useNavigate } from "react-router-dom"
 import axios from "axios"
+const ipAddress = process.env.REACT_APP_IP
 
 function Head() {
   const [user, setUser] = useState("")
@@ -12,7 +13,7 @@ function Head() {
         axios({
             method: "DELETE",
             withCredentials: true,
-            url: "http://192.168.1.11:4000/logout",
+            url: `http://${ipAddress}:4000/logout`,
         }).then(res => {
             if (res.data === "toLogin") navigate("/login")
         }).catch(err => { })
@@ -24,7 +25,7 @@ function Head() {
     async function getData() {
       try {
         let res = await axios({
-          url: 'http://192.168.1.11:4000/user',
+          url: `http://${ipAddress}:4000/user`,
           method: 'GET',
           withCredentials: true,
         })

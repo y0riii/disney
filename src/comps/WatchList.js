@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import "../styles/WatchList.css"
 import Header from "./Header"
 import axios from "axios"
+const ipAddress = process.env.REACT_APP_IP
 
 function WatchList() {
   let can = useRef(false)
@@ -29,7 +30,7 @@ function WatchList() {
   }
 
   function addToWatchList() {
-    axios.post("http://192.168.1.11:4000/addWatch", { id: movieId.current }).then(res => {
+    axios.post(`http://${ipAddress}:4000/addWatch`, { id: movieId.current }).then(res => {
       if (res.data === "added") { span.current.innerText = "-"; span.current.classList.add("active") }
       else if (res.data === "removed") {
         span.current.innerText = "+";
@@ -37,7 +38,7 @@ function WatchList() {
         setMovieCont("")
         setTrailer("")
         trailerVideo.current = ""
-        axios.get("http://192.168.1.11:4000/watchListGet").then(res => {
+        axios.get(`http://${ipAddress}:4000/watchListGet`).then(res => {
           setMovies(res.data)
         })
       }
@@ -46,7 +47,7 @@ function WatchList() {
 
   async function showTrailer(movie) {
     if (selected.current === false) return
-    axios.post("http://192.168.1.11:4000/findWatch", { id: movie.id }).then(res => {
+    axios.post(`http://${ipAddress}:4000/findWatch`, { id: movie.id }).then(res => {
       if (res.data === "found") { span.current.innerText = "-"; span.current.classList.add("active") }
       else { span.current.innerText = "+"; span.current.classList.remove("active") }
     })
@@ -60,7 +61,7 @@ function WatchList() {
           <button onClick={() => { setMovieCont(""); trailerVideo.current = ""; movieId.current = "" }}>Back</button>
         </div>
         <div className="info">
-          <p><span className="span">Average rating</span> : {parseFloat(movie["vote_average"]) * 10} out of 100.</p>
+          <p><span className="span">Average rating</span> : {Math.floor(parseFloat(movie["vote_average"]) * 10)} out of 100.</p>
           <p><span className="span">For adults</span> : {movie.adult === false ? "No" : "Yes"}</p>
           <p><span className="span">Overview</span> : {movie.overview}</p>
         </div>
@@ -84,7 +85,7 @@ function WatchList() {
     selected.current = true
   }, [])
   useEffect(() => {
-    axios.get("http://192.168.1.11:4000/watchListGet").then(res => {
+    axios.get(`http://${ipAddress}:4000/watchListGet`).then(res => {
       setMovies(res.data)
     })
   }, [])

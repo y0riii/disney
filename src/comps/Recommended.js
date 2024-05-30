@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import "../styles/Recommended.css"
 import axios from "axios"
 import { Link } from "react-router-dom"
+const ipAddress = process.env.REACT_APP_IP
 
 function Recommended() {
     const trailerLink = useRef("https://api.themoviedb.org/3/movie/")
@@ -22,7 +23,7 @@ function Recommended() {
     }
 
     function addToWatchList() {
-        axios.post("http://192.168.1.11:4000/addWatch", { id: movieId.current }).then(res => {
+        axios.post(`http://${ipAddress}:4000/addWatch`, { id: movieId.current }).then(res => {
             if (res.data === "added") { span.current.innerText = "-"; span.current.classList.add("active") }
             else if (res.data === "removed") { span.current.innerText = "+"; span.current.classList.remove("active") }
         })
@@ -44,7 +45,7 @@ function Recommended() {
 
     async function showTrailer(movie) {
         if (selected.current === false) return
-        axios.post("http://192.168.1.11:4000/findWatch", { id: movie.id }).then(res => {
+        axios.post(`http://${ipAddress}:4000/findWatch`, { id: movie.id }).then(res => {
             if (res.data === "found") { span.current.innerText = "-"; span.current.classList.add("active") }
             else { span.current.innerText = "+"; span.current.classList.remove("active") }
         })
