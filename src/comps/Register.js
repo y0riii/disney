@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import "../styles/Register.css"
 import { Link, useNavigate } from "react-router-dom"
 import axios from "axios"
@@ -13,6 +13,26 @@ function Register() {
     const [error, setError] = useState("")
     const navigate = useNavigate()
     const can = useRef(false)
+    useEffect(() => {
+        can.current = true
+        async function getData() {
+          try {
+            let res = await axios({
+              url: `http://${ipAddress}:4000/user`,
+              method: 'GET',
+              withCredentials: true,
+            })
+            if (res.status === 200) {
+              if (res.data !== "") return navigate("/")
+            }
+          }
+          catch (err) {
+            //! This is optional.
+            console.error(err);
+          }
+        }
+        getData()
+      },[navigate])
   function register() {
     if (can.current) {
         setError("");
